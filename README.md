@@ -80,22 +80,6 @@ EXTENSION_HOST_PATH=C:\ProgramData\Ableton\Live 12 Beta\Program\ExtensionHost\Ex
 ```bash
 npm start (or) npm run package
 ```
-## Structure
-```bash
-Ableton-YouTube-Separator/
-├── src/
-│   ├── extension.ts (Main script)
-│   ├── Stem.ts (Class that describes a stem)
-│   ├── ProjectImporter.ts (Imports stems or file-paths into project)
-│   ├── YouTubeDownloader.ts (Downloads YouTube as audio file)
-│   ├── AudioSeparatorModel.ts (runs audio-separator with provided model)
-│   └───├── StemSeparator.ts (runs audio-separator using UVR-MDX-NET-Voc_FT)
-│       └── DeReverbModel.ts (runs audio-separator using UVR-DeEcho-DeReverb)
-└── ui/
-    ├── dialog_youtube.html (UI used for downloading only YouTube audio)
-    ├── dialog.html (UI used for downloading YouTube audio and option to DeReverb vocal)
-    └── interface.html (will be removed)
-```
 ## In progress dialog there is a message saying "(Warn: Using CPU)"
 
 If you have an Nvidia GPU, here is the fix:
@@ -105,4 +89,3 @@ First, replace `audio-separator` `Torch 2.12.0` with `Torch 2.11.0+cu128` and ch
 pipx runpip audio-separator install --force-reinstall torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
 ```
 If the message is still there, install [CUDA Toolkit 12.8.0](https://developer.nvidia.com/cuda-12-8-0-download-archive?target_os=Windows&target_arch=x86_64)
-
