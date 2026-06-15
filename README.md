@@ -1,8 +1,10 @@
 
 # Ableton YouTube Separator
-Download audio from YouTube and separate them using audio-separator directly in Ableton (Extensions SDK).
+Download audio from YouTube, separate it by vocal or instrumental and DeReverb/DeEcho it directly in Ableton (Extensions SDK).
 
 ## In progress dialog there is a message saying "(Warn: Using CPU)"
+
+You can still use this extension, but it will take more time.
 
 If you have an Nvidia GPU, here is the fix:
 
