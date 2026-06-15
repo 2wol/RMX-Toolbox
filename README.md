@@ -89,3 +89,5 @@ First, replace `audio-separator` `Torch 2.12.0` with `Torch 2.11.0+cu128` and ch
 pipx runpip audio-separator install --force-reinstall torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
 ```
 If the message is still there, install [CUDA Toolkit 12.8.0](https://developer.nvidia.com/cuda-12-8-0-download-archive?target_os=Windows&target_arch=x86_64)
+
+If it's still there, then idk you cooked bro it works on my machine
