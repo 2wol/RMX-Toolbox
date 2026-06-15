@@ -11,6 +11,9 @@ export class YouTubeDownloader {
     constructor(private readonly outputDir: string) {}
 
     async download(url: string): Promise<Stem> {
+        // making sure the temp folder exist
+        await fs.promises.mkdir(this.outputDir, { recursive: true });
+        
         const outputTemplate = path.join(this.outputDir, "%(title)s.%(ext)s");
         
         const { stdout } = await execFileAsync("yt-dlp", [

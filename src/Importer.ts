@@ -1,5 +1,6 @@
 import type { ExtensionContext } from "@ableton-extensions/sdk";
 import { Stem, StemType } from "./Stem.js";
+import fs from "fs"
 import Path from 'path'
 
 export class Importer {
@@ -8,9 +9,12 @@ export class Importer {
     ) {}
 
     async importStems(stems: Stem[]): Promise<void> {
+        console.log(`Creating ${stems.length} tracks...`);
         for (const stem of stems) {
             const importedPath = await this.context.resources.importIntoProject(stem.path);
             const track = await this.context.application.song.createAudioTrack();
+
+            console.log(`Imported Path: ${importedPath}`);
 
             track.name = stem.trackName;
             const clip = await track.createAudioClip({
@@ -21,6 +25,8 @@ export class Importer {
             });
 
             clip.name = stem.trackName;
+
+            fs.unlinkSync(stem.path);
         }
     }
 }

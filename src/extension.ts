@@ -18,8 +18,8 @@ export function activate(activation: ActivationContext) {
   );
 
   const importer = new Importer(context);
-  const downloader = new YouTubeDownloader(outputDir);
-  const audioSeparator = new AudioSeparator(outputDir);
+  const downloader = new YouTubeDownloader(path.join(outputDir, "downloads"));
+  const audioSeparator = new AudioSeparator(path.join(outputDir, "stems"));
 
   context.commands.registerCommand("rmx-toolbox.yt-dl-start", async () => {
     const url = `data:text/html,${encodeURIComponent(bundledInterface)}`;
@@ -49,27 +49,36 @@ export function activate(activation: ActivationContext) {
 
         update("Done!", 100);
       });
-    } catch (e) {
-      console.error(`[Extension (YouTube Downloader)] Error occured: ${e}`);
+    } catch (e: any) {
+      ThrowError(e);
     }
   });
 
   // Handle is AudioClip
-  context.commands.registerCommand("rmx-toolbox.stem-separator", async (handle) => {
+  context.commands.registerCommand("rmx-toolbox.separate-vocals", async (handle) => {
     const clip = context.getObjectFromHandle(handle as Handle, AudioClip);
     const clipPath = clip.filePath;
 
-    await context.ui.withinProgressDialog(`Stem Separation (UVR-MDX-NET-Voc_FT)`, {}, async (update) => {
-      const stems = await audioSeparator.runSeparator(clipPath, "UVR-MDX-NET-Voc_FT.onnx", {
-        onProgress: ({percent, usingGpu}) => {
-          const gpu_usage = usingGpu === true ? `GPU` : usingGpu === false ? `Warn: Using CPU` : `Detecting...`;
-          update(`Stem Separation (${gpu_usage})`, percent);
-        },
-      }
-      );
+    const workTitle = "Izolating Vocals";
+    const modelName = "UVR-MDX-NET-Voc_FT";
+    const modelPath = "UVR-MDX-NET-Voc_FT.onnx";
 
-      update("Importing...");
-      await importer.importStems(stems);
+    await context.ui.withinProgressDialog(`${workTitle} (${modelName})`, {}, async (update) => {
+      try {
+        const stems = await audioSeparator.runSeparator(clipPath, modelPath, {
+          extraArgs: ["--single_stem", "Vocals"],
+          onProgress: ({ percent, usingGpu }) => {
+            const gpu_usage = usingGpu === true ? `GPU` : usingGpu === false ? `Warn: Using CPU` : `Detecting...`;
+            update(`Izolating Vocals (${gpu_usage})`, percent);
+          },
+        }
+        );
+
+        update("Importing...");
+        await importer.importStems(stems);
+      } catch (e: any) {
+        ThrowError(e);
+      }
     });
   });
 
@@ -77,25 +86,66 @@ export function activate(activation: ActivationContext) {
     const clip = context.getObjectFromHandle(handle as Handle, AudioClip);
     const clipPath = clip.filePath;
 
-    await context.ui.withinProgressDialog(`DeReverb (UVR-DeEcho-DeReverb)`, {}, async (update) => {
-      const stems = await audioSeparator.runSeparator(clipPath, "UVR-DeEcho-DeReverb.pth", {
-        extraArgs: ["--single_stem", "No Reverb"],
-        onProgress: ({percent, usingGpu}) => {
-          const gpu_usage = usingGpu === true ? `GPU` : usingGpu === false ? `Warn: Using CPU` : `Detecting...`;
-          update(`DeReverb/DeEcho (${gpu_usage})`, percent);
-        },
-      }
-      );
+    const workTitle = "DeReverb & DeEcho";
+    const modelName = "UVR-DeEcho-DeReverb";
+    const modelPath = "UVR-DeEcho-DeReverb.pth";
 
-      update("Importing...");
-      await importer.importStems(stems);
+    await context.ui.withinProgressDialog(`${workTitle} (${modelName})`, {}, async (update) => {
+      try {
+        const stems = await audioSeparator.runSeparator(clipPath, modelPath, {
+          extraArgs: ["--single_stem", "No Reverb"],
+          onProgress: ({ percent, usingGpu }) => {
+            const gpu_usage = usingGpu === true ? `GPU` : usingGpu === false ? `Warn: Using CPU` : `Detecting...`;
+            update(`${workTitle} (${gpu_usage})`, percent);
+          },
+        }
+        );
+
+        update("Importing...");
+        await importer.importStems(stems);
+      } catch (e: any) {
+        ThrowError(e);
+      }
+    });
+  });
+
+  context.commands.registerCommand("rmx-toolbox.separate-instrumental", async (handle) => {
+    const clip = context.getObjectFromHandle(handle as Handle, AudioClip);
+    const clipPath = clip.filePath;
+
+    const workTitle = "Separating Instrumental";
+    const modelName = "UVR-MDX-NET-Inst_HQ_4";
+    const modelPath = "UVR-MDX-NET-Inst_HQ_4.onnx";
+
+    await context.ui.withinProgressDialog(`${workTitle} (${modelName})`, {}, async (update) => {
+      try {
+        const stems = await audioSeparator.runSeparator(clipPath, modelPath, {
+          extraArgs: ["--single_stem", "Instrumental"],
+          onProgress: ({ percent, usingGpu }) => {
+            const gpu_usage = usingGpu === true ? `GPU` : usingGpu === false ? `Warn: Using CPU` : `Detecting...`;
+            update(`${workTitle} (${gpu_usage})`, percent);
+          },
+        }
+        );
+
+        update("Importing...");
+        await importer.importStems(stems);
+      } catch (e: any) {
+        ThrowError(e);
+      }
     });
   });
 
   context.ui.registerContextMenuAction(
     "AudioClip",
-    "Stem Separator",
-    "rmx-toolbox.stem-separator",
+    "Separate Vocals",
+    "rmx-toolbox.separate-vocals",
+  );
+
+  context.ui.registerContextMenuAction(
+    "AudioClip",
+    "Separate Instrumental",
+    "rmx-toolbox.separate-instrumental",
   );
 
   context.ui.registerContextMenuAction(
@@ -109,4 +159,9 @@ export function activate(activation: ActivationContext) {
     "YouTube Download",
     "rmx-toolbox.yt-dl-start",
   );
+
+  function ThrowError(e: any) {
+    const msg = e instanceof Error ? `${e.message}\n${e.stack}` : JSON.stringify(e);
+    throw new Error(`[Extension] Error occured: ${msg}`);
+  }
 }
