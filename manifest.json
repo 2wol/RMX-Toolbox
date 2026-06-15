@@ -1,7 +1,7 @@
 {
-    "name": "rmx-toolbox",
+    "name": "RMX Toolbox",
     "author": "TheWolf",
     "entry": "dist/extension.js",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "minimumApiVersion": "1.0.0"
 }
