@@ -6,6 +6,10 @@ Download audio from YouTube and separate them using audio-separator directly in 
 __Troubleshoting__
 
 [(Warn: Using CPU)](https://github.com/2wol/RMX-Toolbox#in-progress-dialog-there-is-a-message-saying-warn-using-cpu)
+
+__Not interesting__
+[(Why pipx)](https://github.com/2wol/RMX-Toolbox#why-pipx)
+
 ## Requirements
 __Ableton Suite 12.4.5__ _or newer_
 
@@ -91,3 +95,10 @@ pipx runpip audio-separator install --force-reinstall torch torchvision torchaud
 If the message is still there, install [CUDA Toolkit 12.8.0](https://developer.nvidia.com/cuda-12-8-0-download-archive?target_os=Windows&target_arch=x86_64)
 
 If it's still there, then idk you cooked bro it works on my machine
+
+# Some not interesting stuff
+## why pipx
+i don't know, I used that to not worry about "finding" FFmpeg and audio-separator separatelly on Windows and MacOS.
+
+## why
+doing all that (separating vocal, DeReverbing it) manually in UVR5 was pain in ahh, now everything is under few click thanks to papa ableton.
