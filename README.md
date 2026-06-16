@@ -3,11 +3,12 @@
 Download audio from YouTube and separate them using audio-separator directly in Ableton (Extensions SDK).
 
 ## Quickies
-__Troubleshoting__
+__Troubleshoting:__
 
 [(Warn: Using CPU)](https://github.com/2wol/RMX-Toolbox#in-progress-dialog-there-is-a-message-saying-warn-using-cpu)
 
-__Not interesting__
+__Not interesting:__
+
 [(Why pipx)](https://github.com/2wol/RMX-Toolbox#why-pipx)
 
 ## Requirements
